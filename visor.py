@@ -15,9 +15,9 @@ import csv
 #from shapely.geometry import Point
 
 from streamlit_folium import folium_static
+from streamlit_folium import st_folium
+from folium.plugins import MousePosition
 import folium
-
-#warnings.simplefilter(action="ignore", category=FutureWarning)
 
 # set page layout configs
 st.set_page_config(
@@ -26,26 +26,8 @@ st.set_page_config(
     page_icon=':rocket:'
     )
 
-set_page_container_style(
-    max_width = 1100, max_width_100_percent = True,
-    padding_top = 0, padding_right = 10, padding_left = 5, padding_bottom = 10
-    )
-
-st.markdown(
-    f'''
-    <style>
-        .reportview-container .sidebar-content {{
-        padding-top: {1}rem;
-    }}
-        .reportview-container .main .block-container {{
-        padding-top: {1}rem;
-        }}
-    </style>
-   ''', unsafe_allow_html=True)
-
-
 # authorized users 
-names = ['rcammi']
+names = ['AGRIM_FIUBA']
 usernames = ['fiuba']
 passwords = ['fiub42023']
 
@@ -53,7 +35,7 @@ passwords = ['fiub42023']
 hashed_passwords = stauth.Hasher(passwords).generate()
 
 authenticator = stauth.Authenticate(names,usernames,hashed_passwords,
-    'pf_gis', 'agrimensura', cookie_expiry_days=7)
+    'Barrios populares RENABAP', 'AGRIM_FIUBA', cookie_expiry_days=7)
 
 name, authentication_status, username = authenticator.login('Login','main')
 
@@ -63,9 +45,7 @@ if authentication_status:
     authenticator.logout('Logout', 'main')
     st.write('Bienvenido *%s*' % (name))
 
-    #st.write('<style>div.row-widget.stRadio > div{flex-direction:row;}</style>', unsafe_allow_html=True)
-
-    st.title("¿Donde están materializados los puntos fijos?")
+    st.title("Barrios Populares CABA")
     
     # get path
     path = Path.cwd()
@@ -73,118 +53,56 @@ if authentication_status:
     # open files
     barrios_pop = gpd.read_file(str(path) + "/datos_GIS/shapefiles/poligono_barrios_populares_renabap.gpkg")
 
-    # for every record there must be a corresponding geometry.
-    # def create_shapefile(shp_path, csv_path):
-    #     """Creates a shapefile from a csv file and saves it on the shp_path determined.
-
-    #     Parameters:
-    #     -----------
-    #         shp_path (str): path where to save shapefile.
-    #         csv_path (str): path where csv file is saved.
-
-    #     Returns:
-    #     --------
-    #         shapefile: a shapefile of points with csv coordinates in crs CABA 2019. 
-    #     """
-    #     puntosFijos = shapefile.Writer(shp_path, shapefile.POINT) 
-        
-    #     # create a point shapefile
-    #     puntosFijos.autoBalance = 1
-
-    #     # create the field names and data type for each.
-    #     puntosFijos.field("ID", "C")
-    #     puntosFijos.field("N", "F", 10, 4)
-    #     puntosFijos.field("E", "F", 10, 4)
-    #     puntosFijos.field("COTA", "F", 10, 4)
-    #     puntosFijos.field("OBS", "C")
-    #     puntosFijos.field("IMAGEN", "C", 70)
-    #     puntosFijos.field("FECHA", "C")
-
-    #     # open csv file with point data 
-    #     with open(csv_path, 'r') as csvfile:
-    #         reader = csv.reader(csvfile, delimiter=',')
-
-    #         # skip header
-    #         next(reader, None)
-        
-    #         #loop through each of the rows and assign the attributes to variables
-    #         for row in reader:
-    #             id = row[0]
-    #             norte = row[1]
-    #             este = row[2]
-    #             cota = row[3]
-    #             observacion = row[7]
-    #             imagen = row[8]
-    #             fecha = row[9]
-
-    #             # create the point geometry
-    #             puntosFijos.point(float(este),float(norte))
-
-    #             # add attribute data
-    #             puntosFijos.record(id, norte, este, cota, observacion, imagen, fecha)
-
-    #     puntosFijos.close()
-
-    #     return puntosFijos
-
-    # create shapefile from csv file
-    # shp_path = str(path) + "/datos_GIS/shapefiles/PF_mugica"
-    # csv_path = str(path) + '/datos_GIS/PF_mugica.csv'
-    # puntosFijos = create_shapefile(shp_path, csv_path)
-
-    # # read new shapefile with point attributes
-    # puntosFijos = gpd.read_file(str(path) + '/datos_GIS/shapefiles/PF_mugica.shp')
-
     # set WGS84 as crs
-    # puntosFijos_WGS84 = puntosFijos.to_crs(epsg=4326)
     barrios_pop_WGS84 = barrios_pop.to_crs(epsg=4326)
 
+    start_zoom = 12
+
     # open map
-    m = folium.Map(location=[-34.582083, -58.379722], tiles='OpenStreetMap', zoom_start=15, control_scale=True)
+    m = folium.Map(location=[-34.62, -58.38], tiles='OpenStreetMap', zoom_start=start_zoom, control_scale=True) 
 
-    #puntosFijos = folium.GeoJson(data=puntosFijos_WGS84["geometry"], name='Puntos')
-    barrios_pop_bordes = folium.GeoJson(data=barrios_pop_WGS84["geometry"], name='Poligonos manzanas')
+    # Add the full-screen control to the map
+    m.add_child(folium.plugins.Fullscreen())
 
-    # add features to map
-    #puntosFijos.add_to(m)
+    barrios_pop_bordes = folium.GeoJson(
+        data=barrios_pop_WGS84, 
+        name='Barrios populares RENABAP', 
+        show=True  # This parameter will show the GeoJson layer by default
+    )   
+
+    fields = ['NOMBRE','Localidad','Departamen','SECCIÓN','MANZANA','Superficie','SIT_DOMINI','LEYES','Link_Ley','VIVI_AROX','Familias','CREACIÓN','TIPO','GAS','AGUA','CLOACAS','ELECTRICID']
+    folium.features.GeoJsonPopup(
+        fields=fields,
+        aliases=[s.upper() for s in fields],
+        labels=True,
+        localize=True,
+        max_width=500,
+        ).add_to(barrios_pop_bordes)
+
+    # add base layers to map
+    folium.TileLayer('OpenStreetMap').add_to(m)
+    folium.TileLayer('Stamen Toner').add_to(m)
+
+    # add the GeoJson layer to the map
     barrios_pop_bordes.add_to(m)
 
-    # parse points from the points shapefile with data to pop up.
-    # for point in puntosFijos_WGS84.index:
-    #     name = puntosFijos_WGS84["ID"].iloc[point]
-    #     coords =  (puntosFijos_WGS84["N"].iloc[point],  puntosFijos_WGS84["E"].iloc[point],  puntosFijos_WGS84["COTA"].iloc[point])
-    #     fecha = puntosFijos_WGS84["FECHA"].iloc[point]
-    #     obs = puntosFijos_WGS84["OBS"].iloc[point]
+    # add the tile layers to the layer control
+    folium.LayerControl(position='topright', 
+                        ).add_to(m)
+    
+    # Create a MousePosition plugin and add it to the map
+    mp = MousePosition(position='bottomright', separator=' | ')
+    mp.add_to(m)
 
-    #     # Define html inside marker pop-up
-    #     if puntosFijos_WGS84["IMAGEN"].iloc[point] != None:
-    #         website = puntosFijos_WGS84["IMAGEN"].iloc[point]   
-    #         pop_html = folium.Html(
-    #                         f"""
-    #                         <p style="text-align: center;"><span style="font-family: Arial, serif; font-size: 20px;">Punto {name}</span></p>
-    #                         <p style="text-align: center;"><span style="font-family: Arial, serif; font-size: 15px;">Fecha: {fecha}</span></p>
-    #                         <p style="text-align: center;"><span style="font-family: Arial, serif; font-size: 15px;">Coords en GK CABA 2019: {coords}</span></p>
-    #                         <p style="text-align: center;"><span style="font-family: Arial, serif; font-size: 15px;">Observaciones: {obs}</span></p>
-    #                         <p style="text-align: center;"><a href={website} target="_blank" title="Imagen"><span style="font-family: Arial, serif; font-size: 15px;">Ir a la imagen</span></a></p>
-    #                         """, script=True)
-    #     else:
-    #         website = 'No tiene imagen'
-    #         pop_html = folium.Html(
-    #                         f"""
-    #                         <p style="text-align: center;"><span style="font-family: Arial, serif; font-size: 20px;">Punto {name}</span></p>
-    #                         <p style="text-align: center;"><span style="font-family: Arial, serif; font-size: 15px;">Fecha: {fecha}</span></p>
-    #                         <p style="text-align: center;"><span style="font-family: Arial, serif; font-size: 15px;">Coords en GK CABA 2019: {coords}</span></p>
-    #                         <p style="text-align: center;"><span style="font-family: Arial, serif; font-size: 15px;">Observaciones: {obs}</span></p>
-    #                         <p style="text-align: center;"><span style="font-family: Arial, serif; font-size: 15px;">{website}</span></p>
-    #                         """, script=True)
-        
-    #     # Create pop-up with html content
-    #     popup = folium.Popup(pop_html, max_width=700)
-    #     custom_marker = folium.Marker(location=(puntosFijos_WGS84["geometry"].iloc[point].y, puntosFijos_WGS84["geometry"].iloc[point].x), tooltip=name, popup=popup)
-    #     custom_marker.add_to(m)
+    # Define a function that resets the zoom level to the starting value
+    def reset_zoom():
+        m.fit_bounds(m.get_bounds())
+
+    # Create a Streamlit button that calls the reset_zoom() function when clicked
+    st.button("Reset Zoom", on_click=reset_zoom)
 
     # show static folium map on streamlit app
-    folium_static(m, width=1200, height=1000)   
+    folium_static(m, width=1800, height=800)
 
 # if authentication is not passed
 elif authentication_status == False:
