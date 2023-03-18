@@ -39,7 +39,7 @@ barrios_pop_bordes = folium.GeoJson(
     data=barrios_pop_WGS84, 
     name='Barrios populares RENABAP', 
     show=True  # This parameter will show the GeoJson layer by default
-)   
+)
 
 fields = ['NOMBRE','Localidad','Departamen','SECCIÓN','MANZANA','Superficie','SIT_DOMINI','LEYES','Link_Ley','VIVI_AROX','Familias','CREACIÓN','TIPO','GAS','AGUA','CLOACAS','ELECTRICID']
 aliases = ['NOMBRE','Localidad','Departamento','SECCIÓN','MANZANA','Superficie','SITIACIÓN DOMINIAL','LEYES','Link Ley','VIVIENDAS APROX.','Familias','CREACIÓN','TIPO','GAS','AGUA','CLOACAS','ELECTRICIDAD']
@@ -49,7 +49,7 @@ folium.features.GeoJsonPopup(
         labels=True,
         localize=True,
         max_width=500,
-        style="font-size:10px"
+        style="font-size:12px",
     ).add_to(barrios_pop_bordes)
 
 # add base layers to map
