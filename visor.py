@@ -1,21 +1,11 @@
 from pathlib import Path
-from re import M
-
-from click import style
 
 import streamlit as st
 import streamlit_authenticator as stauth
 
-#import warnings
-from layout import set_page_container_style
-
 import geopandas as gpd
-import shapefile
-import csv
-#from shapely.geometry import Point
 
 from streamlit_folium import folium_static
-from streamlit_folium import st_folium
 from folium.plugins import MousePosition
 import folium
 
@@ -65,6 +55,9 @@ folium.features.GeoJsonPopup(
 # add base layers to map
 folium.TileLayer('OpenStreetMap').add_to(m)
 folium.TileLayer('Stamen Toner').add_to(m)
+tile_url = 'http://www.google.cn/maps/vt?lyrs=s@189&gl=cn&x={x}&y={y}&z={z}'
+attribution = 'google satellite'
+folium.TileLayer(tile_url, name=attribution, attr=attribution).add_to(m)
 
 # add the GeoJson layer to the map
 barrios_pop_bordes.add_to(m)
