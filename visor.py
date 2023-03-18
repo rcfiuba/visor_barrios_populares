@@ -52,9 +52,10 @@ barrios_pop_bordes = folium.GeoJson(
 )   
 
 fields = ['NOMBRE','Localidad','Departamen','SECCIÓN','MANZANA','Superficie','SIT_DOMINI','LEYES','Link_Ley','VIVI_AROX','Familias','CREACIÓN','TIPO','GAS','AGUA','CLOACAS','ELECTRICID']
+aliases = ['NOMBRE','Localidad','Departamento','SECCIÓN','MANZANA','Superficie','SITIACIÓN DOMINIAL','LEYES','Link Ley','VIVIENDAS APROX.','Familias','CREACIÓN','TIPO','GAS','AGUA','CLOACAS','ELECTRICIDAD']
 folium.features.GeoJsonPopup(
         fields=fields,
-        aliases=[s.upper() for s in fields],
+        aliases=[s.upper() for s in aliases],
         labels=True,
         localize=True,
         max_width=500,
