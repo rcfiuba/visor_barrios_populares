@@ -59,6 +59,7 @@ folium.features.GeoJsonPopup(
         labels=True,
         localize=True,
         max_width=500,
+        style="font-size:10px"
     ).add_to(barrios_pop_bordes)
 
 # add base layers to map
