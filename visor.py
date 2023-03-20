@@ -24,6 +24,20 @@ path = Path.cwd()
 # open files
 barrios_pop = gpd.read_file(str(path) + "/datos_GIS/shapefiles/poligono_barrios_populares_renabap.gpkg")
 
+# Create an empty list to store the links
+links = []
+
+# Iterate through each row of the dataframe and create the link
+for i in range(len(barrios_pop)):
+    if barrios_pop['Link_Ley'][i] == '-':
+        link = barrios_pop['Link_Ley'][i]
+    else:
+        link = f"<a href='{barrios_pop['Link_Ley'][i]}'>{barrios_pop['Link_Ley'][i]}</a>"
+    links.append(link)
+
+# Add the links to the dataframe as a new column
+barrios_pop['Link_Ley'] = links
+
 # set WGS84 as crs
 barrios_pop_WGS84 = barrios_pop.to_crs(epsg=4326)
 
