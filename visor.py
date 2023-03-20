@@ -20,8 +20,18 @@ st.title("Barrios Populares CABA")
 # get path
 path = os.getcwd()
 
-# open files
-barrios_pop = gpd.read_file(str(path) + "/datos_GIS/shapefiles/poligono_barrios_populares_renabap.gpkg")
+@st.cache
+def load_data(data_path):
+    # open files
+    barrios_pop = gpd.read_file(data_path)
+    
+    return barrios_pop
+
+data_path = str(path) + "/datos_GIS/shapefiles/poligono_barrios_populares_renabap.gpkg"
+barrios_pop = load_data(data_path)
+
+# # open files
+# barrios_pop = gpd.read_file(str(path) + "/datos_GIS/shapefiles/poligono_barrios_populares_renabap.gpkg")
 
 # Create a list to store the links
 links = [f"<a href='{link}' target='_blank'>{link}</a>" if link != '-' else '-' for link in barrios_pop['Link_Ley']]
