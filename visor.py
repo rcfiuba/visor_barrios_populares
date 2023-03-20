@@ -1,4 +1,4 @@
-from pathlib import Path
+import os
 
 import streamlit as st
 
@@ -18,7 +18,7 @@ st.set_page_config(
 st.title("Barrios Populares CABA")
     
 # get path
-path = Path.cwd()
+path = os.getcwd()
 
 # open files
 barrios_pop = gpd.read_file(str(path) + "/datos_GIS/shapefiles/poligono_barrios_populares_renabap.gpkg")
@@ -27,12 +27,13 @@ barrios_pop = gpd.read_file(str(path) + "/datos_GIS/shapefiles/poligono_barrios_
 links = []
 
 # Iterate through each row of the dataframe and create the link
-for i in range(len(barrios_pop)):
-    if barrios_pop['Link_Ley'][i] == '-':
-        link = barrios_pop['Link_Ley'][i]
-    else:
-        link = f"<a href='{barrios_pop['Link_Ley'][i]}' target='_blank'>{barrios_pop['Link_Ley'][i]}</a>"
-    links.append(link)
+# for i in range(len(barrios_pop)):
+#     if barrios_pop['Link_Ley'][i] == '-':
+#         link = barrios_pop['Link_Ley'][i]
+#     else:
+#         link = f"<a href='{barrios_pop['Link_Ley'][i]}' target='_blank'>{barrios_pop['Link_Ley'][i]}</a>"
+#     links.append(link)
+links = [f"<a href='{link}' target='_blank'>{link}</a>" if link != '-' else '-' for link in barrios_pop['Link_Ley']]
 
 # Add the links to the dataframe as a new column
 barrios_pop['Link_Ley'] = links
