@@ -1,7 +1,6 @@
 from pathlib import Path
 
 import streamlit as st
-import streamlit_authenticator as stauth
 
 import geopandas as gpd
 
@@ -56,7 +55,7 @@ barrios_pop_bordes = folium.GeoJson(
 )
 
 fields = ['NOMBRE','Localidad','Departamen','SECCIÓN','MANZANA','Superficie','SIT_DOMINI','LEYES','Link_Ley','VIVI_AROX','Familias','CREACIÓN','TIPO','GAS','AGUA','CLOACAS','ELECTRICID']
-aliases = ['NOMBRE','Localidad','Departamento','SECCIÓN','MANZANA','Superficie','SITIACIÓN DOMINIAL','LEYES','Link Ley','VIVIENDAS APROX.','Familias','CREACIÓN','TIPO','GAS','AGUA','CLOACAS','ELECTRICIDAD']
+aliases = ['NOMBRE','Localidad','Departamento','SECCIÓN','MANZANA','Superficie','SITUACIÓN DOMINIAL','LEYES','Link Ley','VIVIENDAS APROX.','Familias','CREACIÓN','TIPO','GAS','AGUA','CLOACAS','ELECTRICIDAD']
 folium.features.GeoJsonPopup(
         fields=fields,
         aliases=[s.upper() for s in aliases],
