@@ -42,25 +42,13 @@ m = folium.Map(location=[-34.62, -58.38], tiles='OpenStreetMap', zoom_start=star
 # Add the full-screen control to the map
 m.add_child(folium.plugins.Fullscreen())
 
-# barrios_pop_bordes = folium.GeoJson(
-#     data=barrios_pop_WGS84, 
-#     name='Barrios populares RENABAP', 
-#     show=True  # This parameter will show the GeoJson layer by default
-# )
-
+# set folium feature
 barrios_pop_bordes = folium.FeatureGroup(name='Barrios populares RENABAP', show=True)
 
 fields = ['NOMBRE','Localidad','Departamen','SECCIÓN','MANZANA','Superficie','SIT_DOMINI','LEYES','Link_Ley','VIVI_AROX','Familias','CREACIÓN','TIPO','GAS','AGUA','CLOACAS','ELECTRICID']
 aliases = ['NOMBRE','Localidad','Departamento','SECCIÓN','MANZANA','Superficie [m2]','SITUACIÓN DOMINIAL','LEYES','Link Ley','VIVIENDAS APROX.','Familias','CREACIÓN','TIPO','GAS','AGUA','CLOACAS','ELECTRICIDAD']
-# folium.features.GeoJsonPopup(
-#         fields=fields,
-#         aliases=[s.upper() for s in aliases],
-#         labels=True,
-#         localize=True,
-#         max_width=500,
-#         style="font-size:12px",
-#     ).add_to(barrios_pop_bordes)
 
+# add geojson data to map
 folium.GeoJson(
     data=barrios_pop_WGS84, 
     popup=folium.features.GeoJsonPopup(
