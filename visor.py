@@ -19,20 +19,11 @@ st.title("Barrios Populares CABA")
     
 # get path
 path = os.getcwd()
-
-@st.cache
-def load_data(data_path):
-    # open files
-    barrios_pop = gpd.read_file(data_path)
-    
-    return barrios_pop
-
 data_path = str(path) + "/datos_GIS/shapefiles/poligono_barrios_populares_renabap.gpkg"
-barrios_pop = load_data(data_path)
 
-# # open files
-# barrios_pop = gpd.read_file(str(path) + "/datos_GIS/shapefiles/poligono_barrios_populares_renabap.gpkg")
-
+# open files
+barrios_pop = gpd.read_file(data_path)
+    
 # Create a list to store the links
 links = [f"<a href='{link}' target='_blank'>{link}</a>" if link != '-' else '-' for link in barrios_pop['Link_Ley']]
 
@@ -42,10 +33,11 @@ barrios_pop['Link_Ley'] = links
 # set WGS84 as crs
 barrios_pop_WGS84 = barrios_pop.to_crs(epsg=4326)
 
+# set initial zoom
 start_zoom = 12
 
 # open map
-m = folium.Map(location=[-34.62, -58.38], tiles='OpenStreetMap', zoom_start=start_zoom, control_scale=True) 
+m = folium.Map(location=[-34.62, -58.38], tiles='OpenStreetMap', zoom_start=start_zoom, control_scale=True) # 
 
 # Add the full-screen control to the map
 m.add_child(folium.plugins.Fullscreen())
