@@ -10,7 +10,7 @@ import folium
 
 # set page layout configs
 st.set_page_config(
-    page_title='Encuentra tus puntos fijos',
+    page_title='Barrios Populares CABA',
     layout='wide',
     page_icon=':rocket:'
     )
