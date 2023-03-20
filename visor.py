@@ -32,7 +32,7 @@ for i in range(len(barrios_pop)):
     if barrios_pop['Link_Ley'][i] == '-':
         link = barrios_pop['Link_Ley'][i]
     else:
-        link = f"<a href='{barrios_pop['Link_Ley'][i]}'>{barrios_pop['Link_Ley'][i]}</a>"
+        link = f"<a href='{barrios_pop['Link_Ley'][i]}' target='_blank'>{barrios_pop['Link_Ley'][i]}</a>"
     links.append(link)
 
 # Add the links to the dataframe as a new column
